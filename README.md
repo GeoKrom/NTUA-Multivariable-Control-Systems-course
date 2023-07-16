@@ -4,6 +4,6 @@ Semester project for course DPMS_AS/2201 - Multivariable Control Systems, School
 
 # Authors
 
-George Kassavetakis
+[George Kassavetakis](https://github.com/Gkassavetakis)
 
 [George Krommydas](https://github.com/GeoKrom)
