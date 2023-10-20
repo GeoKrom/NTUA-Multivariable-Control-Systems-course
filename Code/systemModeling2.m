@@ -2,44 +2,44 @@
 % Created for the Multivariable Systems Lab
 % Athens 02/2023
 % Authors: 
-%   G.Kassavetakis AM02121203
-%   G.Krommidas    AM02121208
+%   G. Kassavetakis AM 02121203
+%   G. Krommydas    AM 02121208
 
 clc
 clear
 close all
 
 %% Reading the Training Result
-Tbl=readtable('SineResultTrain.csv');
-t=Tbl.Time;
-y=Tbl.Position;
-u=Tbl.Input;
+Tbl = readtable('SineResultTrain.csv');
+t = Tbl.Time;
+y = Tbl.Position;
+u = Tbl.Input;
 
 %% Ordinary Least Squares Model Method
 
 %Filter Creation for n=5
-s=tf('s');
-n=5;
-m=4;
-% L=[1.25,0.625,0.1563,0.01953,0.0009766];
-% filter=tf(1,[1, L]);
-filter=1/(s+5)^n;
-L=filter.Denominator{:};
-L=L(2:end);
+s = tf('s');
+n = 5;
+m = 4;
+% L = [1.25, 0.625, 0.1563, 0.01953, 0.0009766];
+% filter = tf(1, [1, L]);
+filter = 1/(s+5)^n;
+L = filter.Denominator{:};
+L = L(2:end);
 %Best Result
-Hy=-[s^4;s^3;s^2;s;1]*filter;
-Hu=[s^4;s^3;s^2;s;1]*filter;
+Hy = -[s^4;s^3;s^2;s;1]*filter;
+Hu = [s^4;s^3;s^2;s;1]*filter;
 
 % Backstepping Vector calculation
 phi1 = lsim(Hy,y,t);
 phi2 = lsim(Hu,u,t);
-phi=[phi1,phi2]';
+phi = [phi1, phi2]';
 
 % Method Implementation
-N=length(t);
-S1=double(zeros(n+m+1,n+m+1));
-S2=double(zeros(n+m+1,1));
-for i=1:N
+N = length(t);
+S1 = double(zeros(n+m+1,n+m+1));
+S2 = double(zeros(n+m+1,1));
+for i = 1:N
    S1 = S1 + double(phi(:,i)*phi(:,i)');
    S2 = S2 + double(phi(:,i)*y(i));
 end
@@ -50,10 +50,10 @@ a = theta0(1:n)'+L;
 b = theta0((n+1):end)';
 
 % Model's tf Creation
-G=tf(b,[1, a]);
+G = tf(b,[1, a]);
 
 % Training Result Figure
-y_m_train=lsim(G,u,t);
+y_m_train = lsim(G,u,t);
 figure(1)
 clf
 plot(t,y,'b-')
@@ -68,11 +68,11 @@ legend('Plant','Model','Location','northeast')
 %% Model Testing
 
 % Reading Test Data
-Tbl=readtable('SineResultTest.csv');
-t_test=Tbl.Time;
-y_test=Tbl.Position;
-u_test=Tbl.Input;
-y_model=lsim(G,u_test,t_test);
+Tbl = readtable('SineResultTest.csv');
+t_test = Tbl.Time;
+y_test = Tbl.Position;
+u_test = Tbl.Input;
+y_model = lsim(G,u_test,t_test);
 
 % Testing Figure
 figure(2)
